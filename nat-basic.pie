@@ -1,0 +1,25 @@
+#lang pie
+
+(claim my-add
+  (-> Nat Nat Nat))
+
+(define my-add (lambda (a b)
+  (iter-Nat a b (lambda (x) (add1 x)))))
+
+(check-same Nat 0 (my-add 0 0))
+(check-same Nat 1 (my-add 1 0))
+(check-same Nat 1 (my-add 0 1))
+(check-same Nat 5 (my-add 2 3))
+(check-same Nat 5 (my-add 3 2))
+
+(claim my-mul
+  (-> Nat Nat Nat))
+
+(define my-mul (lambda (a b)
+  (iter-Nat a 0 (lambda (x) (my-add x b)))))
+
+(check-same Nat 0 (my-mul 0 0))
+(check-same Nat 0 (my-mul 1 0))
+(check-same Nat 0 (my-mul 0 1))
+(check-same Nat 6 (my-mul 2 3))
+(check-same Nat 6 (my-mul 3 2))

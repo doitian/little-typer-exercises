@@ -1,0 +1,42 @@
+#lang pie
+
+(claim my-append
+  (Pi ((E U))
+    (-> (List E) (List E) (List E))))
+
+(define my-append
+  (lambda (E)
+    (lambda (a b)
+
+      (rec-List
+        a
+        b
+        (lambda (e es almost) (:: e almost)))
+      
+      )))
+
+(check-same (List Atom) nil (my-append Atom (the (List Atom) nil) nil))
+(check-same (List Atom) (:: 'foo nil) (my-append Atom (the (List Atom) nil) (:: 'foo nil)))
+(check-same (List Atom) (:: 'foo (:: 'bar (:: 'baz nil))) (my-append Atom (:: 'foo nil) (:: 'bar (:: 'baz nil))))
+(check-same (List Atom) (:: 'foo (:: 'bar (:: 'baz nil))) (my-append Atom (:: 'foo (:: 'bar nil)) (:: 'baz nil)))
+
+(claim my-reverse
+  (Pi ((E U))
+    (-> (List E) (List E))))
+
+(define my-reverse
+  (lambda (E)
+    (lambda (list)
+
+      (rec-List
+        list
+        (the (List E) nil)
+        (lambda (e es almost)
+          (my-append E almost (:: e nil))
+          ))
+      
+      )))
+
+(check-same (List Atom) nil (my-reverse Atom (the (List Atom) nil)))
+(check-same (List Atom) (:: 'foo nil) (my-reverse Atom (:: 'foo nil)))
+(check-same (List Atom) (:: 'foo (:: 'bar (:: 'baz nil))) (my-reverse Atom (:: 'baz (:: 'bar (:: 'foo nil)))))

@@ -1,0 +1,52 @@
+#lang pie
+
+(claim my-last
+  (Pi ((E U)
+       (n Nat))
+    (-> (Vec E (add1 n)) E)))
+
+   
+(define my-last
+
+  (lambda (E n)
+
+    (ind-Nat
+      n
+      (lambda (x) (-> (Vec E (add1 x)) E))
+      (lambda (es) (head es))
+      (lambda (x)
+        (lambda (almost)
+          (lambda (es) (almost (tail es)))))
+    )
+
+  ))
+
+
+(check-same Atom 'foo (my-last Atom 0 (vec:: 'foo vecnil)))
+(check-same Atom 'bar (my-last Atom 1 (vec:: 'foo (vec:: 'bar vecnil))))
+
+
+(claim my-drop-last
+  (Pi ((E U)
+       (n Nat))
+    (-> (Vec E (add1 n)) (Vec E n))))
+
+
+(define my-drop-last
+
+  (lambda (E n)
+
+    (ind-Nat
+      n
+      (lambda (x) (-> (Vec E (add1 x)) (Vec E x)))
+      (lambda (es) (tail es))
+      (lambda (x)
+        (lambda (almost)
+          (lambda (es) (vec:: (head es) (almost (tail es))))))
+    )
+
+  ))
+
+(check-same (Vec Atom 0) vecnil (my-drop-last Atom 0 (vec:: 'foo vecnil)))
+(check-same (Vec Atom 1) (vec:: 'foo vecnil) (my-drop-last Atom 1 (vec:: 'foo (vec:: 'bar vecnil))))
+(check-same (Vec Atom 2) (vec:: 'foo (vec:: 'bar vecnil)) (my-drop-last Atom 2 (vec:: 'foo (vec:: 'bar (vec:: 'baz vecnil)))))
