@@ -1,0 +1,44 @@
+#lang pie
+
+(claim step-+ (-> Nat Nat))
+(define step-+
+  (lambda (n)
+    (add1 n)))
+
+(claim + (-> Nat Nat Nat))
+(define +
+  (lambda (a b)
+    (iter-Nat a b step-+)))
+
+(check-same Nat (+ 1 2) 3)
+
+(claim add1+=+add1
+  (Pi ((n Nat) (j Nat))
+    (= Nat (add1 (+ n j)) (+ n (add1 j)))))
+
+(claim mot-add1+=+add1
+  (-> Nat Nat U))
+
+(define mot-add1+=+add1
+  (lambda (j n)
+    (= Nat (add1 (+ n j)) (+ n (add1 j)))))
+
+(claim step-add1+=+add1
+  (Pi ((j Nat) (n-1 Nat))
+    (-> (mot-add1+=+add1 j n-1)
+      (mot-add1+=+add1 j (add1 n-1)))))
+
+(define step-add1+=+add1
+  (lambda (j n-1)
+    (lambda (almost)
+      (cong almost step-+))))
+
+(define add1+=+add1
+  (lambda (n j)
+    (ind-Nat
+      n
+      (mot-add1+=+add1 j)
+      (same (add1 j))
+      (step-add1+=+add1 j))))
+      
+      
